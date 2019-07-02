@@ -62,6 +62,13 @@ def node_joystick_traction():
     joystick_ref = pygame.joystick.Joystick(0)
     # Se inicializa el joystick de esa referencia
     joystick_ref.init()
+    # Referencia de la palanca estado actual
+    ref_try_axis_3 = joystick_ref.get_axis(3)
+    # Esperar a que se mueva palanca aceleracion para que se calibre
+    while ref_try_axis_3 == joystick_ref.get_axis(3):
+        rate.sleep()
+        pygame.event.clear()
+        pass
     # Se corre el nodo hasta que este se finalice
     while not rospy.is_shutdown():
         empty_event_queue()
@@ -74,9 +81,10 @@ def node_joystick_traction():
                 left, rigth = steering(axis1, axis0, max_rpm*(-axis3+1)/2)
             else:
                 left, rigth = int((max_rpm*(-axis3+1)/2)*axis2), int(-(max_rpm*(-axis3+1)/2)*axis2)
-            print(left, rigth)
             order = traction_Orders()
-            order.rpm_derecha, order.rpm_izquierda = rigth, left
+            order.rpm_r, order.rpm_l = rigth, left
+            order.header.stamp = rospy.Time.now()
+            order.header.seq = order.header.seq + 1
             pub_traction_orders.publish(order)
             axis_moved = False
         rate.sleep()
