@@ -55,6 +55,8 @@ def node_joystick_traction():
     pygame.init()
     # Inicilizar el modulo pygame la deteccion del joystick
     pygame.joystick.init()
+    # Referencia a envio de mensaje
+    order = traction_Orders()
     # Espera a que se concete el joystick fisico al computador
     while pygame.joystick.get_count() != 1 and not rospy.is_shutdown():
             rate.sleep()
@@ -81,7 +83,6 @@ def node_joystick_traction():
                 left, rigth = steering(axis1, axis0, max_rpm*(-axis3+1)/2)
             else:
                 left, rigth = int((max_rpm*(-axis3+1)/2)*axis2), int(-(max_rpm*(-axis3+1)/2)*axis2)
-            order = traction_Orders()
             order.rpm_r, order.rpm_l = rigth, left
             order.header.stamp = rospy.Time.now()
             order.header.seq = order.header.seq + 1
