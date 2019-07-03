@@ -65,7 +65,7 @@ def node_joystick_traction():
     # Referencia de la palanca estado actual
     ref_try_axis_3 = joystick_ref.get_axis(3)
     # Esperar a que se mueva palanca aceleracion para que se calibre
-    while ref_try_axis_3 == joystick_ref.get_axis(3):
+    while ref_try_axis_3 == joystick_ref.get_axis(3) and not rospy.is_shutdown():
         rate.sleep()
         pygame.event.clear()
         pass
