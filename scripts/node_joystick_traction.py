@@ -86,6 +86,7 @@ def node_joystick_traction():
             order.rpm_r, order.rpm_l = rigth, left
             order.header.stamp = rospy.Time.now()
             order.header.seq = order.header.seq + 1
+            order.sensibility = (max_rpm*(-axis3+1)/2)
             pub_traction_orders.publish(order)
             axis_moved = False
         rate.sleep()
