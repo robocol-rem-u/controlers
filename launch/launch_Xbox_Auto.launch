@@ -1,0 +1,10 @@
+<launch>
+	<!-- <node pkg="robocol_new_arm" type="resting_pose.py" name="resting_pose"/> -->
+	<node respawn="true" pkg="joy" type="joy_node" name="XboX_joy" >
+    	<param name="dev" type="string" value="/dev/input/js4" />
+    	<param name="deadzone" value="0.12" />
+    </node>
+	<node pkg="controlers" type="node_Xbox_Controller_auto.py" name="node_xbox_controller_arm" output="screen"/>
+	<include file="$(find robocol_new_arm)/launch/display.launch"/>
+	<node pkg="robocol_new_arm" type="auto.py" name="auto" output="screen" />
+</launch>

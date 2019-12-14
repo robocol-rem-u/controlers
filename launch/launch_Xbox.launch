@@ -1,0 +1,8 @@
+<launch>
+	<node respawn="true" pkg="joy"
+        type="joy_node" name="XboX_joy" >
+    <param name="dev" type="string" value="/dev/input/js4" />
+    <param name="deadzone" value="0.12" />
+  </node>
+	<node pkg="controlers" type="node_Xbox_Controller.py" name="node_xbox_controller" output="screen"/>
+</launch>
