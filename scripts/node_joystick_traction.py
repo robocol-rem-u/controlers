@@ -6,25 +6,18 @@ import math
 
 # Referencia del objeto del joystick
 joystick_ref = None
-
 # Referencia de eje #0 del joystick
 axis0 = 0
-
 # Referencia de eje #1 del joystick
 axis1 = 0
-
 # Referencia de eje #2 del joystick
 axis2 = 0
-
 # Referencia de eje #3 del joystick
 axis3 = 0
-
 # Referenc de eventos generados de eje Movido:
 axis_moved = False
-
 # Maximas rpm de las llantas
 max_rpm = 250
-
 
 # Caracteristicas del Joystick
 # Numero de botones = 13
@@ -42,26 +35,27 @@ max_rpm = 250
 # JOYBUTTONDOWN = 10
 # JOYBUTTONUP = 11
 
-
 def node_joystick_traction():
     global joystick_ref, axis_moved, axis0, axis1, axis2, axis3
-    # Se inicializa el nodo de deteccion del joystick fisico
+    # Se inicializa el nodo de deteccion del joystick fisico llamado node_joystick_traction
     rospy.init_node('node_joystick_traction', anonymous=True)
-    # Publica en el topico traction orders
+    # Publica en el topico topic_traction_orders
     pub_traction_orders = rospy.Publisher('topic_traction_orders', traction_Orders, queue_size=10)
     # Se define la tasa a la cual se ejecuta el nodo
     rate = rospy.Rate(10)
-    # Iniciliza modulos de pyagame necesarios para el llamado de eventos
+    # Iniciliza modulos de pygame necesarios para el llamado de eventos
     pygame.init()
     # Inicilizar el modulo pygame la deteccion del joystick
     pygame.joystick.init()
     # Referencia a envio de mensaje
     order = traction_Orders()
-    # Espera a que se concete el joystick fisico al computador
+    print('Esperando...')
+    # Espera a que se conecte el joystick fisico al computador
     while pygame.joystick.get_count() != 1 and not rospy.is_shutdown():
-            rate.sleep()
+        rate.sleep()
+    print('Conectado')
     # Se crea la referencia al joystick
-    joystick_ref = pygame.joystick.Joystick(0)
+    joystick_ref = pygame.joystick.Joystick(4)
     # Se inicializa el joystick de esa referencia
     joystick_ref.init()
     # Referencia de la palanca estado actual
@@ -70,6 +64,7 @@ def node_joystick_traction():
     while ref_try_axis_3 == joystick_ref.get_axis(3) and not rospy.is_shutdown():
         rate.sleep()
         pygame.event.clear()
+        print('Palanca')
         pass
     # Se corre el nodo hasta que este se finalice
     while not rospy.is_shutdown():
@@ -89,6 +84,12 @@ def node_joystick_traction():
             order.sensibility = int(max_rpm*(-axis3+1)/2)
             pub_traction_orders.publish(order)
             axis_moved = False
+        order.rpm_r, order.rpm_l = 0.0,0.0
+        order.header.stamp = rospy.Time.now()
+        order.header.seq = order.header.seq + 1
+        order.sensibility = int(100)
+        pub_traction_orders.publish(order)
+        axis_moved = False
         rate.sleep()
 
 def steering(x, y, sensibilidad_rcv):
@@ -108,7 +109,6 @@ def steering(x, y, sensibilidad_rcv):
     right = max(min(right, 1), -1)
     return int(sensibilidad_rcv*left), int(sensibilidad_rcv*right)
 
-
 def empty_event_queue():
     global axis_moved
     for event in pygame.event.get():
@@ -122,7 +122,6 @@ def empty_event_queue():
             pass
         elif event.type == pygame.JOYBUTTONUP:
             pass
-
 
 if __name__ == '__main__':
     try:

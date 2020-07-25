@@ -25,7 +25,7 @@ def move_group():
     moveit_commander.robot()
     # print(dir(moveit_commander))
     #print(moveit_commander.__file__)
-    rospy.init_node('move_gorup',anonymous=True)
+    rospy.init_node('move_group',anonymous=True)
     # robot = moveit_commander.robot()
     # SUSCRIBERS
     # PUBLISHERS

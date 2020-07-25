@@ -1,5 +1,5 @@
 <launch>
 
-  <node pkg="controlers" type="node_joystick_traction.py" name="node_joystick_traction"/>
+  <node pkg="controlers" type="node_joystick_traction.py" name="node_joystick_traction" output="screen"/>
 
 </launch>
